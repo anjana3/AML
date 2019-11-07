@@ -1,3 +1,6 @@
+library(readr)
+library(tidyverse)
+library(stringr)
 library(DT)
 library(shinyWidgets)
 library(lubridate)
@@ -57,18 +60,28 @@ Data_VisualizationUI <- function(id) {
 
       uiOutput(ns("typeplot_text")),
       tags$hr(),
-      uiOutput(ns("graph_type")),
-      tags$hr(),
       uiOutput(ns("drop_xvariable")),
-      uiOutput(ns("drop_yvariable")),
-      actionButton(ns("act"),label = "Click here for plot",style="color: #fff; background-color: green;border-color: #2e6da4",width = 150)
-      
+      uiOutput(ns("drop_yvariable"))
     ),
-    mainPanel("Plot Output",
-      plotOutput(ns("plot_output_visual"))
+    mainPanel(
+      fluidPage(
+      navbarPage("Choose graph",
+                 
+                 navbarMenu(tags$b("LINE CHARTS"), 
+                            tabPanel(tags$b("Basic Line"), 
+                                     plotOutput(ns("Basicline_plot_output"))
+                            ), 
+                            tabPanel(tags$b("Time Series"), plotOutput(ns("Timeseries_plot_output")))
+                 ),
+                 
+                 navbarMenu(tags$b("BARCHARTS"), 
+                            tabPanel(tags$b("Basic Bar"), plotOutput(ns("basicbar_plot_ouput"))), 
+                            tabPanel(tags$b("Stacked Bar"), plotOutput(ns("stackedbar_plot_output")))),
+                 id = "navbar"
+      )
     )
   )
-  )
+  ))
 }
 
 
@@ -77,7 +90,8 @@ Data_Visualizationserver <- function(input, output, session) {
   
   values <- reactiveValues()
   plot   <- reactiveValues()
-  
+  observe(
+  print(is.null(input$Basicline_plot_output)))
   
   uploaded_Data <- reactive({
     file_to_read <- input$uploaded_file
@@ -162,7 +176,7 @@ Data_Visualizationserver <- function(input, output, session) {
       else  
           statement<-paste0(values$radio_type_plot," is based on the grammar of graphics, the
       idea that you can build every graph from the same
-                            few components: a data set, a set of geoms—visual
+                            few components: a data set, a set of geoms-visual
                             marks that represent data points, and a coordinate
                             system.")
         
@@ -176,9 +190,9 @@ Data_Visualizationserver <- function(input, output, session) {
   output$drop_xvariable <-renderUI({
     
     if(is_empty(uploaded_Data())){
-      selectInput(ns("dataset_column"),label = "Select Variable(X):",choices = c("Choose a Dataset"))
+      selectInput(ns("dataset_xcolumn"),label = "Select Variable(X):",choices = c("Choose a Dataset"))
     }else{
-        selectInput("dataset_column",label = "Select Variable(X):",choices = names(uploaded_Data()))
+        selectInput(ns("dataset_xcolumn"),label = "Select Variable(X):",choices = names(uploaded_Data()))
     }
   })  # End of the render output
   
@@ -187,10 +201,45 @@ Data_Visualizationserver <- function(input, output, session) {
   output$drop_yvariable <-renderUI({
     
     if(is_empty(uploaded_Data())){
-      selectInput("dataset_column",label = "Select Variable(Y):",choices = c("Choose a Dataset"))
+      selectInput(ns("dataset_ycolumn"),label = "Select Variable(Y):",choices = c("Choose a Dataset"))
     }else{
-      selectInput("dataset_column",label = "Select Variable(Y):",choices = names(uploaded_Data()))
+      selectInput(ns("dataset_ycolumn"),label = "Select Variable(Y):",choices = names(uploaded_Data()))
     }
   })
+
+  
+  
+ 
+  dataset_xcolumn_input <- reactive({
+    
+    req(input$dataset_xcolumn)
+    
+    print(uploaded_Data())
+    
+    dataset_xcolumn_input <- uploaded_Data() %>% select(input$dataset_xcolumn)
+    
+  })
+  
+  dataset_ycolumn_input <- reactive({
+    
+    req(input$dataset_ycolumn)
+    
+    dataset_ycolumn_input <- uploaded_Data() %>% select(input$dataset_ycolumn)
+    
+  })
+  
+  observe({
+    
+  dataset_inputgraph <- data.frame(x = dataset_xcolumn_input(),y = dataset_ycolumn_input())
+
+  output$Basicline_plot_output<-renderPlot({
+          
+          ggplot(data = dataset_inputgraph, aes(x = dataset_inputgraph[,1], y = dataset_inputgraph[,2],color=df_hg[,2], size=df_hg[,2])) +
+            geom_line()
+  })})
+ 
+ output$Timeseries_plot_output<-renderPlot({
+   
+ })
   
 }  # End of the server
