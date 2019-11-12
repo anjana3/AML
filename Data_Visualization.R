@@ -189,11 +189,15 @@ Data_Visualizationserver <- function(input, output, session) {
   
   output$drop_xvariable <-renderUI({
     
-    if(is_empty(uploaded_Data())){
+    if(is.null(uploaded_Data())){
+      print("executing choose a dataseet2")
       selectInput(ns("dataset_xcolumn"),label = "Select Variable(X):",choices = c("Choose a Dataset"))
     }else{
+      print("3")
         selectInput(ns("dataset_xcolumn"),label = "Select Variable(X):",choices = names(uploaded_Data()))
-    }
+   print(input$dataset_xcolumn)
+        print("checking for condition")
+         }
   })  # End of the render output
   
   # render output for the y varible in sidebar for the plot
@@ -207,37 +211,50 @@ Data_Visualizationserver <- function(input, output, session) {
     }
   })
 
-  
-  
- 
-  dataset_xcolumn_input <- reactive({
+  observe({
+  if(is.null(uploaded_Data())){
+    Example_df<-mtcars
+    values$dataset_inputgraph <- data.frame(x = Example_df$hp,y = Example_df$carb)
     
-    req(input$dataset_xcolumn)
-    
-    print(uploaded_Data())
+      }else{
     
     dataset_xcolumn_input <- uploaded_Data() %>% select(input$dataset_xcolumn)
-    
-  })
-  
-  dataset_ycolumn_input <- reactive({
-    
-    req(input$dataset_ycolumn)
-    
+    print("checking for 2")
     dataset_ycolumn_input <- uploaded_Data() %>% select(input$dataset_ycolumn)
+    print("executed y column")
+    values$dataset_inputgraph <- data.frame(x = dataset_xcolumn_input,y = dataset_ycolumn_input)
     
-  })
-  
-  observe({
-    
-  dataset_inputgraph <- data.frame(x = dataset_xcolumn_input(),y = dataset_ycolumn_input())
+    }
+    })
+  # 
+  # dataset_xcolumn_input <- reactive({
+  # 
+  #   req(input$dataset_xcolumn)
+  # 
+  #   print(uploaded_Data())
+  # 
+  #   dataset_xcolumn_input <- uploaded_Data() %>% select(input$dataset_xcolumn)
+  # 
+  # })
+  # 
+  # dataset_ycolumn_input <- reactive({
+  # 
+  #   req(input$dataset_ycolumn)
+  # 
+  #   dataset_ycolumn_input <- uploaded_Data() %>% select(input$dataset_ycolumn)
+  # 
+  # })
+  # 
+  # observe({
+
 
   output$Basicline_plot_output<-renderPlot({
-          
-          ggplot(data = dataset_inputgraph, aes(x = dataset_inputgraph[,1], y = dataset_inputgraph[,2],color=df_hg[,2], size=df_hg[,2])) +
+
+          ggplot(data = values$dataset_inputgraph, aes(x = values$dataset_inputgraph[,1], y = values$dataset_inputgraph[,2])) +
             geom_line()
-  })})
- 
+  })
+  #})
+
  output$Timeseries_plot_output<-renderPlot({
    
  })
