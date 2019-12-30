@@ -135,7 +135,7 @@ Data_Visualizationserver <- function(input, output, session) {
   
   output$info_details_dataset <- renderInfoBox({
     uploaded <- uploaded_Data()
-    if (is_empty(uploaded)) {
+    if (is.null(uploaded)) {
       details_dataset <- paste("Please choose a dataset")
       
     } else{
@@ -167,7 +167,7 @@ Data_Visualizationserver <- function(input, output, session) {
   
   output$typeplot_text<-renderUI({
     values$radio_type_plot <- input$typeplot_radio
-    if(is_empty(values$radio_type_plot)){
+    if(is.null(values$radio_type_plot)){
     }
     
       else if (values$radio_type_plot == "highchart" ) 
@@ -190,13 +190,10 @@ Data_Visualizationserver <- function(input, output, session) {
   output$drop_xvariable <-renderUI({
     
     if(is.null(uploaded_Data())){
-      print("executing choose a dataseet2")
       selectInput(ns("dataset_xcolumn"),label = "Select Variable(X):",choices = c("Choose a Dataset"))
     }else{
-      print("3")
         selectInput(ns("dataset_xcolumn"),label = "Select Variable(X):",choices = names(uploaded_Data()))
-   print(input$dataset_xcolumn)
-        print("checking for condition")
+  
          }
   })  # End of the render output
   
@@ -204,56 +201,31 @@ Data_Visualizationserver <- function(input, output, session) {
   
   output$drop_yvariable <-renderUI({
     
-    if(is_empty(uploaded_Data())){
+    if(is.null(uploaded_Data())){
       selectInput(ns("dataset_ycolumn"),label = "Select Variable(Y):",choices = c("Choose a Dataset"))
     }else{
       selectInput(ns("dataset_ycolumn"),label = "Select Variable(Y):",choices = names(uploaded_Data()))
     }
   })
 
-  observe({
-  if(is.null(uploaded_Data())){
+  
+Dataset_graph <- function() {
+       if(is.null(uploaded_Data())){
     Example_df<-mtcars
     values$dataset_inputgraph <- data.frame(x = Example_df$hp,y = Example_df$carb)
     
       }else{
-    
-    dataset_xcolumn_input <- uploaded_Data() %>% select(input$dataset_xcolumn)
-    print("checking for 2")
-    dataset_ycolumn_input <- uploaded_Data() %>% select(input$dataset_ycolumn)
-    print("executed y column")
-    values$dataset_inputgraph <- data.frame(x = dataset_xcolumn_input,y = dataset_ycolumn_input)
+        values$dataset_inputgraph <-data.frame(uploaded_Data() %>% select(input$dataset_ycolumn),uploaded_Data() %>% select(input$dataset_xcolumn))
     
     }
-    })
-  # 
-  # dataset_xcolumn_input <- reactive({
-  # 
-  #   req(input$dataset_xcolumn)
-  # 
-  #   print(uploaded_Data())
-  # 
-  #   dataset_xcolumn_input <- uploaded_Data() %>% select(input$dataset_xcolumn)
-  # 
-  # })
-  # 
-  # dataset_ycolumn_input <- reactive({
-  # 
-  #   req(input$dataset_ycolumn)
-  # 
-  #   dataset_ycolumn_input <- uploaded_Data() %>% select(input$dataset_ycolumn)
-  # 
-  # })
-  # 
-  # observe({
-
-
+}    
+ 
   output$Basicline_plot_output<-renderPlot({
-
+        Dataset_graph()
           ggplot(data = values$dataset_inputgraph, aes(x = values$dataset_inputgraph[,1], y = values$dataset_inputgraph[,2])) +
             geom_line()
   })
-  #})
+  
 
  output$Timeseries_plot_output<-renderPlot({
    
