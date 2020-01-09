@@ -157,6 +157,25 @@
     border-right: rgba(149, 160, 166, 0.23) 2px solid;
 }
 
-
+.downloadgraph_class {
+    background-color: #605ca8;
+    color: rgb(255, 255, 255);
+    border-color: rgb(75, 156, 112);
+    margin-top: 15px;
 }
 
+.btn-default {
+    background-color: #605ca8;
+    color: rgb(255, 255, 255);
+    border-color: rgb(75, 156, 112);
+}
+
+.executegraph_class{
+   background-color: #605ca8;
+    color: rgb(255, 255, 255);
+    border-color: rgb(75, 156, 112);
+}
+
+.adddesign_class{
+  padding-top:18px;
+}
