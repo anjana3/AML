@@ -78,6 +78,8 @@ Data_VisualizationUI <- function(id) {
       actionButton(ns("executegraph"), label = "Run Plot", class = "executegraph_class")
     ),
     mainPanel(fluidPage(
+      
+      
       navbarPage(
         "Choose graph",
         
@@ -103,8 +105,46 @@ Data_VisualizationUI <- function(id) {
         ),
         id = "navbar"
       ),
-      downloadButton(ns("download_graph"), label = "Download Graph", class = "downloadgraph_class")
-    ))
+      downloadButton(ns("download_graph"), label = "Download Graph", class = "downloadgraph_class"),
+      
+      
+      #tags$br(),
+      tags$br(),
+      tags$br(),
+      fluidRow(
+        # tags$head(
+        #   tags$style(type="text/css", "#inline label{ display: table-cell; text-align: center; vertical-align: middle; } 
+        #              #inline .form-group { display: table-row;}")
+        #   ),
+        column(width = 6,
+      box(
+        width = 12,
+        class = "adddesign_class",
+        title = "Add Design to the Graph",
+        collapsible = TRUE,
+        collapsed = TRUE,
+        solidHeader = TRUE,
+        status = "success",
+        textInput(ns("title_graph"), label = h4("Add Title: "), value = "Example Graph"),
+        textInput(ns("subtitle_graph"), label = h4("Add SubTitle: "), value = "Enter subtitle"),
+        textInput(ns("caption_graph"), label = h4("Add Source: "), value = "Enter caption"),
+        textInput(ns("xlabel_graph"), label = h4("Add X Label: "), value = "Enter X Label"),
+        textInput(ns("ylabel_graph"), label = h4("Add Y Label: "), value = "Enter Y Label")
+        )
+      
+      
+      ),
+      column(width = 6,
+        box(
+          width = 12,
+          class = "adddesign_class",
+          title = "Add labels to the Graph",
+          collapsible = TRUE,
+          collapsed = TRUE,
+          solidHeader = TRUE,
+          status = "success")
+      )
+    )))
   ))
 }
 
@@ -295,7 +335,14 @@ Data_Visualizationserver <- function(input, output, session) {
         y = values$dataset_inputgraph[, 2]
       )
     ) +
-      geom_line() + ggtitle(label = "Example Graph for Basic Line") +
+      geom_line() + 
+      labs(title = input$title_graph,
+           subtitle = input$subtitle_graph,
+           caption = input$caption_graph)+
+      #ggtitle(label = input$title_graph) + 
+      xlab(input$xlabel_graph) +
+      ylab(input$ylabel_graph)+
+      theme(plot.background = element_rect(fill = "#ECF0F5"))+
       geom_point()
   })
   
@@ -314,7 +361,13 @@ Data_Visualizationserver <- function(input, output, session) {
       geom_text(aes(label = ..count..),
                 stat = "count",
                 position = position_stack(0.5)) + coord_flip() +
-      theme(plot.background = element_rect(fill = "#ECF0F5"))
+      labs(title = input$title_graph,
+           subtitle = input$subtitle_graph,
+           caption = input$caption_graph)+
+      # ggtitle(label = input$title_graph) +
+      theme(plot.background = element_rect(fill = "#ECF0F5"))+
+      xlab(input$xlabel_graph) +
+      ylab(input$ylabel_graph)
     
   })
   output$Timeseries_plot_output <- renderPlot({
