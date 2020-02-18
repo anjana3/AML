@@ -117,34 +117,34 @@ Data_VisualizationUI <- function(id) {
         #              #inline .form-group { display: table-row;}")
         #   ),
         column(width = 6,
-      box(
-        width = 12,
-        class = "adddesign_class",
-        title = "Add Design to the Graph",
-        collapsible = TRUE,
-        collapsed = TRUE,
-        solidHeader = TRUE,
-        status = "success",
-        textInput(ns("title_graph"), label = h4("Add Title: "), value = "Example Graph"),
-        textInput(ns("subtitle_graph"), label = h4("Add SubTitle: "), value = "Enter subtitle"),
-        textInput(ns("caption_graph"), label = h4("Add Source: "), value = "Enter caption"),
-        textInput(ns("xlabel_graph"), label = h4("Add X Label: "), value = "Enter X Label"),
-        textInput(ns("ylabel_graph"), label = h4("Add Y Label: "), value = "Enter Y Label")
+               box(
+                 width = 12,
+                 class = "adddesign_class",
+                 title = "Add Design to the Graph",
+                 collapsible = TRUE,
+                 collapsed = TRUE,
+                 solidHeader = TRUE,
+                 status = "success",
+                 textInput(ns("title_graph"), label = h4("Add Title: "), value = "Example Graph"),
+                 textInput(ns("subtitle_graph"), label = h4("Add SubTitle: "), value = "Enter subtitle"),
+                 textInput(ns("caption_graph"), label = h4("Add Source: "), value = "Enter caption"),
+                 textInput(ns("xlabel_graph"), label = h4("Add X Label: "), value = "Enter X Label"),
+                 textInput(ns("ylabel_graph"), label = h4("Add Y Label: "), value = "Enter Y Label")
+               )
+               
+               
+        ),
+        column(width = 6,
+               box(
+                 width = 12,
+                 class = "adddesign_class",
+                 title = "Add labels to the Graph",
+                 collapsible = TRUE,
+                 collapsed = TRUE,
+                 solidHeader = TRUE,
+                 status = "success")
         )
-      
-      
-      ),
-      column(width = 6,
-        box(
-          width = 12,
-          class = "adddesign_class",
-          title = "Add labels to the Graph",
-          collapsible = TRUE,
-          collapsed = TRUE,
-          solidHeader = TRUE,
-          status = "success")
-      )
-    )))
+      )))
   ))
 }
 
@@ -354,8 +354,8 @@ Data_Visualizationserver <- function(input, output, session) {
       aes(
         x = values$dataset_inputgraph[, 1],
         #y = values$dataset_inputgraph[, 2],
-      fill = values$dataset_inputgraph[, 2]
-        )
+        fill = values$dataset_inputgraph[, 2]
+      )
     ) + 
       geom_bar() +
       geom_text(aes(label = ..count..),
