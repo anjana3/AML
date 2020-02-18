@@ -1,4 +1,3 @@
-
 library(shiny)
 library(DataExplorer)
 library(UpSetR)
@@ -8,6 +7,7 @@ library(mice)
 library(purrr)
 library(keras)
 library(caret)
+library(colourpicker)
 library(rpart.plot)
 library(ggplot2)
 
@@ -23,7 +23,7 @@ library(shinyalert)
 library(corrplot)
 library(shinyWidgets)
 library(shinyFeedback)
-
+  
 source("Details.R")
 source("Data_Exploration.R")
 source("Data_Prediction.R")
